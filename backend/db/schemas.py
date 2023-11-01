@@ -12,3 +12,9 @@ class UserLogin(BaseModel):
     email: str
     password: str
 
+
+class CreateProject(BaseModel):
+    name: str
+    description: str
+
+

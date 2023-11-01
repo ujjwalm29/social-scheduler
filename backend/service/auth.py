@@ -6,16 +6,18 @@ from sqlalchemy.orm import Session
 
 from db import crud, schemas
 from passlib.context import CryptContext
-from error.error import AuthException
+from error.error import AuthException, UserExistsError
 
 ALGORITHM = "HS256"
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
 def signup(user_create: schemas.UserCreate, db: Session):
+    db_user = crud.get_user(user_create.email, db)
+    if db_user is not None:
+        raise UserExistsError()
     hash_pwd = pwd_context.hash(user_create.password)
     db_user = crud.signup(user_create, hash_pwd, db)
-    print(db_user)
 
     return create_access_token({"email": db_user.email, "name": db_user.name})
 
@@ -29,7 +31,7 @@ def create_access_token(data: dict):
 
 
 def login(user_login: schemas.UserLogin, db: Session):
-    db_user = crud.login(user_login, db)
+    db_user = crud.get_user(user_login.email, db)
     if db_user is None:
         raise AuthException()
     if not verify_password(user_login.password, db_user.password):
@@ -37,6 +39,10 @@ def login(user_login: schemas.UserLogin, db: Session):
     return create_access_token({"email": db_user.email, "name": db_user.name})
 
 
+def validate_token(token: str, db: Session):
+    payload = jwt.decode(token, os.getenv("SECRET_KEY"), algorithms=[ALGORITHM])
+    return payload
+
+
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
-

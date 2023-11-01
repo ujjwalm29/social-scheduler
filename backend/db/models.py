@@ -9,6 +9,7 @@ class Project(Base):
     project_id: int = Column(Integer, primary_key=True)
     name: str = Column(String, unique=True)
     description: str = Column(String, default="")
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
 
 
 class User(Base):
