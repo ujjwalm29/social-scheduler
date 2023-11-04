@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Integer, ForeignKeyConstraint, ForeignKey, func, DateTime
+from sqlalchemy import Column, String, Integer, ForeignKeyConstraint, ForeignKey, func, DateTime, UniqueConstraint
 from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
@@ -7,9 +7,14 @@ Base = declarative_base()
 class Project(Base):
     __tablename__ = "project"
     project_id: int = Column(Integer, primary_key=True)
-    name: str = Column(String, unique=True)
+    owner_id: int = Column(Integer, nullable=False)
+    name: str = Column(String, nullable=False)
     description: str = Column(String, default="")
     time_created = Column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (
+        UniqueConstraint('owner_id', 'name', name='unique_project_name'),
+    )
 
 
 class User(Base):
@@ -50,6 +55,18 @@ class Request(Base):
     status: str = Column(String)
     description: str = Column(String)
     approve_message: str = Column(String)
+    created_by: int = Column(Integer, ForeignKey("user.user_id"))
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
+    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+class Invite(Base):
+    __tablename__ = "invite"
+    id: int = Column(Integer, primary_key=True)
+    token: str = Column(String)
+    project_id: int = Column(Integer, ForeignKey("project.project_id"))
+    email: str = Column(String)
+    status: str = Column(String)
     created_by: int = Column(Integer, ForeignKey("user.user_id"))
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())

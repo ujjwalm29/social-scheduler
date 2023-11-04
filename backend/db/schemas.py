@@ -1,3 +1,5 @@
+from typing import List
+
 from pydantic import BaseModel
 
 
@@ -16,5 +18,17 @@ class UserLogin(BaseModel):
 class CreateProject(BaseModel):
     name: str
     description: str
+
+
+class Project(BaseModel):
+    project_id: int
+    role: str
+    name: str
+    description: str
+
+
+class ProjectInvite(BaseModel):
+    project_id: int
+    emails: List[str]
 
 
