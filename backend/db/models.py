@@ -39,10 +39,39 @@ class Content(Base):
     id: int = Column(Integer, primary_key=True)
     name: str = Column(String)
     project_id: int = Column(Integer, ForeignKey("project.project_id"))
-    type: str = Column(String)
+    platform: str = Column(String)
     created_by: int = Column(Integer, ForeignKey("user.user_id"))
+    description: str = Column(String)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+
+class YTMeta(Base):
+    __tablename__ = "yt_meta"
+    id: int = Column(Integer, primary_key=True)
+    content_id: int = Column(Integer, ForeignKey("content.id"))
+    title: str = Column(String)
+    description: str = Column(String)
+    live_time: DateTime = Column(DateTime)
+    video_id: int = Column(Integer, ForeignKey("video.id"))
+    thumbnail_id: int = Column(Integer, ForeignKey("image.id"))
+
+
+class Video(Base):
+    __tablename__ = "video"
+    id: int = Column(Integer, primary_key=True)
+    content_id: int = Column(Integer, ForeignKey("content.id"))
+    url: str = Column(String)
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class Image(Base):
+    __tablename__ = "image"
+    id: int = Column(Integer, primary_key=True)
+    content_id: int = Column(Integer, ForeignKey("content.id"))
+    url: str = Column(String)
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
 
 
 class Request(Base):
