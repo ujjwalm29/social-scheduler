@@ -3,7 +3,7 @@ import os
 from db import schemas, crud
 from enum import Enum
 import uuid
-from utils import email
+from utils import send_email
 
 
 class ProjectRole(Enum):
