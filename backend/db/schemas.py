@@ -1,6 +1,7 @@
 from typing import List
 
 from pydantic import BaseModel
+from db import enums
 
 
 class UserCreate(BaseModel):
@@ -30,5 +31,20 @@ class Project(BaseModel):
 class ProjectInvite(BaseModel):
     project_id: int
     emails: List[str]
+
+
+class YTDetails(BaseModel):
+    title: str
+    description: str
+    live_time: str
+    video_id: str
+    thumbnail_id: str
+
+
+class Content(BaseModel):
+    name: str
+    platform: enums.Platform
+    description: str
+
 
 

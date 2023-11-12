@@ -2,6 +2,12 @@ import os
 import smtplib, ssl
 from dotenv import load_dotenv
 
+'''
+To debug locally, set port and server as 1025, localhost. Run this command
+python -m smtpd -c DebuggingServer -n localhost:1025
+'''
+
+
 load_dotenv()
 
 port = int(os.getenv("SMTP_PORT"))

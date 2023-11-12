@@ -73,6 +73,16 @@ async def accept_invite(request: Request, token: str, db: Session = Depends(get_
     return JSONResponse(status_code=200, content={"msg": "Invite accepted"})
 
 
+@router.post("/{id}/content/create", status_code=201)
+async def create_content(request: Request, id: int, content: schemas.Content, db: Session = Depends(get_db)):
+    # check in service if project_role of requestor is owner or editor
+    if project.check_project_member_role(request.state.email, id, db) is False:
+        raise HTTPException(status_code=401, detail="You are not authorized to create content for this project")
+
+    # create content
+    project.create_content(request.state.email, id, content, db)
+
+
 
 @router.on_event("shutdown")
 def shutdown():

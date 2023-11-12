@@ -1,5 +1,6 @@
-from sqlalchemy import Column, String, Integer, ForeignKeyConstraint, ForeignKey, func, DateTime, UniqueConstraint
+from sqlalchemy import Column, String, Integer, Enum as EnumType, ForeignKey, func, DateTime, UniqueConstraint
 from sqlalchemy.orm import declarative_base
+from db import enums
 
 Base = declarative_base()
 
@@ -30,7 +31,7 @@ class ProjectMember(Base):
     __tablename__ = "project_member"
     project_id: int = Column(Integer, ForeignKey("project.project_id"), primary_key=True)
     user_id: int = Column(Integer, ForeignKey("user.user_id"), primary_key=True)
-    role: str = Column(String)
+    role: str = Column(EnumType(enums.ProjectRole), nullable=False)
     status: str = Column(String)
 
 

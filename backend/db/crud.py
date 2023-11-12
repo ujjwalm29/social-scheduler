@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
-from db import schemas, models
-from service.project import ProjectRole
+from db import schemas, models, enums
+
 
 
 def signup(user_create: schemas.UserCreate, hashed_password, db: Session):
@@ -26,9 +26,9 @@ def create_project(user, create_proj, db: Session):
     return db_proj
 
 
-def assign_project_member(email, project_id, role: ProjectRole, db: Session):
+def assign_project_member(email, project_id, role: enums.ProjectRole, db: Session):
     user = get_user(email, db)
-    db_member = models.ProjectMember(user_id=user.user_id, project_id=project_id, role=str(role.name), status="active")
+    db_member = models.ProjectMember(user_id=user.user_id, project_id=project_id, role=role, status="active")
     db.add(db_member)
     db.commit()
     db.refresh(db_member)
@@ -74,3 +74,9 @@ def update_invite(token, new_status, db):
     db_invite = db.query(models.Invite).filter(models.Invite.token == token).first()
     db_invite.status = new_status
     db.commit()
+
+
+def create_content(db_user, id, content, db):
+    db_content = models.Content(**content.dict(), created_by=db_user.user_id, project_id=id)
+    db.add(db_content)
+    return db_content
