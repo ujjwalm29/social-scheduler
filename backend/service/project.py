@@ -19,7 +19,9 @@ def create_project(owner_email, create_proj: schemas.CreateProject, db):
 
 def get_projects(email, db):
     db_user = crud.get_user(email, db)
-    # db_projects = crud.get_projects(db_user, db)
+
+    if db_user is None:  # user does not exist. Extremely rare case
+        return []
 
     db_roles = crud.get_project_roles(db_user, db)
 
@@ -79,12 +81,16 @@ def check_project_member(email, project_id, db):
 
 def check_project_member_role(email, project_id, db):
     db_user = crud.get_user(email, db)
+
+    if db_user is None:  # user does not exist. Extremely rare case
+        return False
+
     db_member = crud.get_project_member(db_user, project_id, db)
 
     if db_member is None or (db_member.role != enums.ProjectRole.admin and db_member.role != enums.ProjectRole.editor):
         return False
 
-    return db_member.role
+    return True
 
 
 def assign_project_member(email, project_id, db):
@@ -93,9 +99,3 @@ def assign_project_member(email, project_id, db):
 
 def update_invite_status(token, new_status, db):
     db_invite = crud.update_invite(token, new_status, db)
-
-
-def create_content(email, id, content, db):
-    db_user = crud.get_user(email, db)
-    db_content = crud.create_content(db_user, id, content, db)
-    return db_content

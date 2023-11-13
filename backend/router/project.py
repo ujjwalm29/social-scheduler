@@ -7,7 +7,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse
 
 from db import schemas, setup
-from service import project
+from service import project, content as content_service
 
 router = APIRouter(
     prefix="/project",
@@ -35,6 +35,7 @@ async def create_project(request: Request, create_proj: schemas.CreateProject, d
 
 @router.get("", response_model=List[schemas.Project])
 async def get_projects(request: Request, db: Session = Depends(get_db)):
+    print(request.state.email)
     return project.get_projects(request.state.email, db)
 
 
@@ -73,14 +74,15 @@ async def accept_invite(request: Request, token: str, db: Session = Depends(get_
     return JSONResponse(status_code=200, content={"msg": "Invite accepted"})
 
 
-@router.post("/{id}/content/create", status_code=201)
+@router.post("/{id}/content", status_code=201)
 async def create_content(request: Request, id: int, content: schemas.Content, db: Session = Depends(get_db)):
     # check in service if project_role of requestor is owner or editor
     if project.check_project_member_role(request.state.email, id, db) is False:
         raise HTTPException(status_code=401, detail="You are not authorized to create content for this project")
 
     # create content
-    project.create_content(request.state.email, id, content, db)
+    content_id = content_service.create_content(request.state.email, id, content, db)
+    return JSONResponse(status_code=201, content={"content_id": f"{content_id}"})
 
 
 

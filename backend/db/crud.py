@@ -79,4 +79,37 @@ def update_invite(token, new_status, db):
 def create_content(db_user, id, content, db):
     db_content = models.Content(**content.dict(), created_by=db_user.user_id, project_id=id)
     db.add(db_content)
+    db.commit()
     return db_content
+
+
+def get_content_by_id(id, db):
+    db_content = db.query(models.Content).filter(models.Content.id == id).first()
+    return db_content
+
+
+def add_youtube_details(id, yt_details, db):
+    db_yt_details = models.YTDetails(**yt_details.dict(), content_id=id)
+    db.add(db_yt_details)
+    db.commit()
+
+
+def add_linkedin_details(id, linkedin_details, db):
+    db_linkedin_details = models.LIDetails(**linkedin_details.dict(), content_id=id)
+    db.add(db_linkedin_details)
+    db.commit()
+
+
+def add_image(content_id, key_name, email, db):
+    user = get_user(email, db)
+    db_image = models.Image(content_id=content_id, name=key_name, created_by=user.user_id)
+    db.add(db_image)
+    db.commit()
+
+
+def add_video(content_id, key_name, email, status: enums.UploadStatus, db):
+    user = get_user(email, db)
+    db_image = models.Video(content_id=content_id, name=key_name, created_by=user.user_id, status=status)
+    db.add(db_image)
+    db.commit()
+    return None

@@ -2,6 +2,7 @@ from typing import List
 
 from pydantic import BaseModel
 from db import enums
+from datetime import datetime
 
 
 class UserCreate(BaseModel):
@@ -36,9 +37,14 @@ class ProjectInvite(BaseModel):
 class YTDetails(BaseModel):
     title: str
     description: str
+    live_time: datetime
+    video_id: int
+    thumbnail_id: int
+
+
+class LinkedInDetails(BaseModel):
+    text: str
     live_time: str
-    video_id: str
-    thumbnail_id: str
 
 
 class Content(BaseModel):
@@ -47,4 +53,6 @@ class Content(BaseModel):
     description: str
 
 
-
+class ContentDetails(BaseModel):
+    platform: enums.Platform
+    details: YTDetails | LinkedInDetails

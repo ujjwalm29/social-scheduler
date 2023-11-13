@@ -13,3 +13,9 @@ class ProjectRole(str, Enum):
     admin = "admin"
     editor = "editor"
     read_only = "read_only"
+
+
+class UploadStatus(str, Enum):
+    pending = "pending"
+    failed = "failed"
+    success = "success"

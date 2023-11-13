@@ -48,10 +48,10 @@ class Content(Base):
 
 
 
-class YTMeta(Base):
-    __tablename__ = "yt_meta"
+class YTDetails(Base):
+    __tablename__ = "yt_details"
     id: int = Column(Integer, primary_key=True)
-    content_id: int = Column(Integer, ForeignKey("content.id"))
+    content_id: int = Column(Integer, ForeignKey("content.id"), nullable=False)
     title: str = Column(String)
     description: str = Column(String)
     live_time: DateTime = Column(DateTime)
@@ -59,19 +59,30 @@ class YTMeta(Base):
     thumbnail_id: int = Column(Integer, ForeignKey("image.id"))
 
 
+class LIDetails(Base):
+    __tablename__ = "li_details"
+    id: int = Column(Integer, primary_key=True)
+    content_id: int = Column(Integer, ForeignKey("content.id"))
+    text: str = Column(String)
+    live_time: DateTime = Column(DateTime)
+
+
 class Video(Base):
     __tablename__ = "video"
     id: int = Column(Integer, primary_key=True)
     content_id: int = Column(Integer, ForeignKey("content.id"))
-    url: str = Column(String)
+    created_by: int = Column(Integer, ForeignKey("user.user_id"))
+    name: str = Column(String)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
+    status: str = Column(EnumType(enums.UploadStatus), nullable=False)
 
 
 class Image(Base):
     __tablename__ = "image"
     id: int = Column(Integer, primary_key=True)
     content_id: int = Column(Integer, ForeignKey("content.id"))
-    url: str = Column(String)
+    created_by: int = Column(Integer, ForeignKey("user.user_id"))
+    name: str = Column(String)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
 
 

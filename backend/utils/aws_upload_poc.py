@@ -22,7 +22,7 @@ def generate_presigned_url(bucket_name, object_name, expiration=1800):
             'put_object',
             Params={
                 'Bucket': bucket_name,
-                'Key': object_name,
+                'Key': f"images/{object_name}",
                 'ContentType': 'text/plain'
             },
             ExpiresIn=expiration
